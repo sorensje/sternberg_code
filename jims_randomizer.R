@@ -142,6 +142,7 @@ for(iter_loop in 1:n_loops){
     vanilla_data_matrix <- matrix(trial_data_iteration[trial_data_iteration$cond==iter_cond,'onset_cue_local_secs'],byrow=TRUE,nrow= n_runs)
     write.table(vanilla_data_matrix,filename_cue, row.names=FALSE, col.names = FALSE)
   }
+  
   #write run lengths
   filename_runlengths <-  paste(filename_prefix,"_runlengths_iter_",iter_loop,".txt",sep="")
   filename_run_TRstart <-  paste(filename_prefix,"_run_TRstart_iter_",iter_loop,".txt",sep="")
