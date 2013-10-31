@@ -6,9 +6,9 @@
 #Note attempt_folder is subdirectory name where files from R script are stored
 # prefix is prefix for R files 
 
-rootdir="/Users/Jim/Desktop/optimize_sarah/"
-attempt_folder="Jim_try1"
-prefix="firstpass"
+rootdir="/Users/Jim/Desktop/optimize_sarah/code_jim_optimize/"
+attempt_folder="meeting"
+prefix="initial_iti_2scue_2probe"
 
 
 
@@ -54,7 +54,7 @@ for counter in {1..5}; do
 	-x1D 3dD_${prefix}_${counter}.xmat.1D > 3dD_${prefix}_${counter}.txt
 
 	echo 'StimTimes_'${prefix}'_'${counter} $( tail -1 3dD_${prefix}_${counter}.txt ) >> ITIOptim_3dD_${prefix}.txt
-	 
+
 done
 
 

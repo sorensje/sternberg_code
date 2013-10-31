@@ -1,11 +1,11 @@
 ### Jim script
 # generate set of orders for Sternberg (to be run via deconvolve)
 # for sternberg, with trial structure 
-encoding_duration <- 7500
+encoding_duration <- 6500
 # isi1 <- defined below
 cueduration <- 4000
 # isi2 <- defined below
-probeduration <- 4000
+probeduration <- 3000
 # iti <- defined below
 
 #########
