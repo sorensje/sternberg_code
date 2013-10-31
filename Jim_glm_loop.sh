@@ -7,8 +7,8 @@
 # prefix is prefix for R files 
 
 rootdir="/Users/Jim/Desktop/optimize_sarah/code_jim_optimize/"
-attempt_folder="meeting"
-prefix="initial_iti_2scue_2probe"
+attempt_folder="post_meeting"
+prefix="jims_prob432_update_iti_nobyrun"
 
 
 
@@ -57,4 +57,5 @@ for counter in {1..5}; do
 
 done
 
+# 	echo 'StimTimes_'${prefix}'_'${counter} $(cat 3dD_initial_iti_rulez_1.txt |grep General) $( cat 3dD_initial_iti_rulez_1.txt |grep LC ) >> Optimize${prefix}.txt
 

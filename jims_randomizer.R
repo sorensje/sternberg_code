@@ -10,10 +10,12 @@ probeduration <- 3000
 
 #########
 # Setup
-study_folder <- "/Users/Jim/Desktop/optimize_sarah/"
-attempt_folder <- "Jim_try1"
+study_folder <- "/Users/Jim/Desktop/optimize_sarah/code_jim_optimize/"
+setwd(study_folder)
+attempt_folder <- "post_meeting"
+# dir.create(attempt_folder) #if necessary
 setwd(paste(study_folder,attempt_folder,sep="")) # set wd
-filename_prefix <- "firstpass" #set this to whatever
+filename_prefix <- "jims_itirules_notbyrun_allow3" #set this to whatever
 
 conditions <- c("all_neg","mixed_expel_pos","all_pos","mixed_expel_neg")
 conditions <- factor(conditions)
@@ -26,9 +28,14 @@ n_loops <- 5 #terrible name
 
 ###### what are ISI functions? ######
 # probably the thing we'll want to play with.
-ISI_1_rule <- expression(sample(c(2500,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
-ISI_2_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
-ITI_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+# ISI_1_rule <- expression(sample(c(2500,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+# ISI_2_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+# ITI_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+
+ISI_1_rule <- expression(sample(c(3500,5500,7500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
+ISI_2_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
+ITI_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
+
 
 # ### if use Michael's functions...
 # source("~/Desktop/optimize_sarah/code_jim_optimize/expConstrain.R")
@@ -38,6 +45,9 @@ ITI_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE
 # ISI_2_rule <- randUnifConstrain(trials_percond, seq(2000,10000,by=100), 2500)
 # ITI_rule <- randUnifConstrain(trials_percond, seq(2000,10000,by=100), 4000)
 
+# ISI_1_rule <- expression(randUnifConstrain(trials_percond, seq(2000,8000,by=100), 3500)) #slow 
+# ISI_2_rule <- expression(randUnifConstrain(trials_percond, seq(2000,6000,by=100), 2500))
+# ITI_rule <- expression(randUnifConstrain(trials_percond, seq(2000,6000,by=100), 2500))
 
 
 ########### 
@@ -63,7 +73,7 @@ for(iter_loop in 1:n_loops){
   ### randomize inner loop 
   trial_data_iteration <- trial_data_master
     ## randomize order of conditions
-    for (iter_run in 1: n_runs){ #necessary to do this to maintain same number of trials in run
+#     for (iter_run in 1: n_runs){ #necessary to do this to maintain same number of trials in run
       no_crazyrepeats <- FALSE
       while (no_crazyrepeats == FALSE){
         cond <- sample(trial_data_iteration[trial_data_iteration$run==iter_run,'cond'],replace=F)
@@ -72,10 +82,10 @@ for(iter_loop in 1:n_loops){
         threeinarow <- cond == cond_plus1 & cond_plus1 == cond_plus2
         threeinarow[is.na(threeinarow)] <- FALSE
         n_threeinarow <- sum(as.numeric(threeinarow))
-        no_crazyrepeats <- n_threeinarow < 3
+        no_crazyrepeats <- n_threeinarow < 4
         trial_data_iteration[trial_data_iteration$run==iter_run,'cond'] <- cond
       }
-    }  # while loop doesn't allow three-peats 
+#     }  # while loop doesn't allow three-peats 
   
   
   #### make ISIs & ITIs (set up to do per condition, if we decide to do that)
