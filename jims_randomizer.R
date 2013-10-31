@@ -15,7 +15,7 @@ setwd(study_folder)
 attempt_folder <- "post_meeting"
 # dir.create(attempt_folder) #if necessary
 setwd(paste(study_folder,attempt_folder,sep="")) # set wd
-filename_prefix <- "jims_itirules_notbyrun_allow3" #set this to whatever
+filename_prefix <- "rdux_isi_nobyrun_432" #set this to whatever
 
 conditions <- c("all_neg","mixed_expel_pos","all_pos","mixed_expel_neg")
 conditions <- factor(conditions)
@@ -24,7 +24,7 @@ n_trials <- 96
 n_runs <- 4
 trials_percond <- n_trials/n_conds
 trials_percond_per_run <- n_trials/n_runs/n_conds
-n_loops <- 5 #terrible name
+n_loops <- 25 #terrible name
 
 ###### what are ISI functions? ######
 # probably the thing we'll want to play with.
@@ -32,9 +32,13 @@ n_loops <- 5 #terrible name
 # ISI_2_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
 # ITI_rule <- expression(sample(c(2000,4000,6000),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
 
-ISI_1_rule <- expression(sample(c(3500,5500,7500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
-ISI_2_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
-ITI_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.5,.3,.2))+runif(trials_percond,-500,500))
+ISI_1_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+ISI_2_rule <- expression(sample(c(3500,5500,7500),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+ITI_rule <- expression(sample(c(2500,4500,6500),size=trials_percond,replace=TRUE,prob=c(.4,.3,.2))+runif(trials_percond,-500,500))
+
+# ISI_1_rule <- expression(ms_poisson_cutoffs_mean(trials_percond,2500,target_min=2000,target_max=8000,lambda=1))
+# ISI_2_rule <- expression(ms_poisson_cutoffs_mean(trials_percond,2500,target_min=2000,target_max=8000,lambda=1))
+# ITI_rule <- expression(ms_poisson_cutoffs_mean(trials_percond,3500,target_min=2000,target_max=8000,lambda=1))
 
 
 # ### if use Michael's functions...
@@ -57,6 +61,7 @@ trial_data_master <- data.frame(trial=1:n_trials,
                          run=rep(1:n_runs,times=1,each=n_trials/n_runs),
                          studytime=rep(encoding_duration,n_trials),
                          cue_time=rep(cueduration,n_trials)
+                         probe_time=rep(probeduration,n_trials)
                          )
 trial_data_master$cond <- conditions #lazy
 trial_data_master$ISI_1 <- 0
@@ -82,21 +87,36 @@ for(iter_loop in 1:n_loops){
         threeinarow <- cond == cond_plus1 & cond_plus1 == cond_plus2
         threeinarow[is.na(threeinarow)] <- FALSE
         n_threeinarow <- sum(as.numeric(threeinarow))
-        no_crazyrepeats <- n_threeinarow < 4
+        no_crazyrepeats <- n_threeinarow < 3
         trial_data_iteration[trial_data_iteration$run==iter_run,'cond'] <- cond
       }
-#     }  # while loop doesn't allow three-peats 
+# #     }  # while loop doesn't allow three-peats 
   
+#   no_crazyrepeats <- FALSE
+#   while (no_crazyrepeats == FALSE){
+#     cond <- sample(trial_data_iteration[,'cond'],replace=F)
+#     cond_plus1 <- Hmisc::Lag(cond, 1)
+#     cond_plus2 <- Hmisc::Lag(cond, 2)
+#     threeinarow <- cond == cond_plus1 & cond_plus1 == cond_plus2
+#     threeinarow[is.na(threeinarow)] <- FALSE
+#     n_threeinarow <- sum(as.numeric(threeinarow))
+#     no_crazyrepeats <- n_threeinarow < 4
+#     trial_data_iteration[,'cond'] <- cond
+#   }
   
   #### make ISIs & ITIs (set up to do per condition, if we decide to do that)
-   for(iter_cond in conditions){
-     trial_data_iteration[trial_data_iteration$cond==iter_cond,'ISI_1'] <-eval(ISI_1_rule) 
-     trial_data_iteration[trial_data_iteration$cond==iter_cond,'ISI_2'] <-eval(ISI_2_rule) 
-     trial_data_iteration[trial_data_iteration$cond==iter_cond,'ITI'] <-eval(ITI_rule) 
-   }
+#    for(iter_cond in conditions){
+#      trial_data_iteration[trial_data_iteration$cond==iter_cond,'ISI_1'] <-eval(ISI_1_rule) 
+#      trial_data_iteration[trial_data_iteration$cond==iter_cond,'ISI_2'] <-eval(ISI_2_rule) 
+#      trial_data_iteration[trial_data_iteration$cond==iter_cond,'ITI'] <-eval(ITI_rule) 
+#    }
+  
+#        trial_data_iteration[,'ISI_1'] <-eval(ISI_1_rule) 
+#        trial_data_iteration[,'ISI_2'] <-eval(ISI_2_rule) 
+#        trial_data_iteration[,'ITI'] <-eval(ITI_rule) 
   
   ## calculate trial onsets
-  trial_data_iteration$trial_duration <- rowSums(trial_data_iteration[,c("studytime", "cue_time","ISI_1","ISI_2","ITI")])
+  trial_data_iteration$trial_duration <- rowSums(trial_data_iteration[,c("studytime","probe_time", "cue_time","ISI_1","ISI_2","ITI")])
   trial_data_iteration$b4cue_duration <- rowSums(trial_data_iteration[,c("studytime","ISI_1")])
   
   for (iter_run in 1: n_runs){ 
